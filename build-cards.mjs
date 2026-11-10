@@ -160,12 +160,18 @@ const block =
   ";\n/*DETAILS_END*/";
 
 const before = html;
-html = html.replace(/\/\*DETAILS_START\*\/[\s\S]*?\/\*DETAILS_END\*\//, () => block);
-if (html === before) {
+const MARKER = /\/\*DETAILS_START\*\/[\s\S]*?\/\*DETAILS_END\*\//;
+if (!MARKER.test(html)) {
   console.error("✗ 找不到 /*DETAILS_START*/…/*DETAILS_END*/ 標記");
   process.exit(1);
 }
+html = html.replace(MARKER, () => block);
+if (html === before) console.log("（內容未變，重複建置）");
 fs.writeFileSync(HTML, html);
+
+// GitHub Pages 的入口頁：與卡片頁同內容，避免根網址 404。
+const INDEX = path.join(dir, "index.html");
+fs.copyFileSync(HTML, INDEX);
 
 // ---------- 5. report ----------
 const cardNames = [...html.matchAll(/\{id:"MT-\d+", name:"([^"]+)"/g)].map((m) => m[1]);
