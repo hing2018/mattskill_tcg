@@ -77,6 +77,10 @@
   .spacer{flex:1}
   .count{font:600 12px ui-monospace,monospace;color:var(--dim);letter-spacing:.08em}
 
+  /* 篩選列：桌機照舊（.filter-panel 用 display:contents 攤平），手機才折疊 */
+  .filter-toggle{display:none}
+  .filter-panel{display:contents}
+
   .grid{
     max-width:1400px;margin:0 auto;
     display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
@@ -335,6 +339,43 @@
   .chip.game-btn{border-color:color-mix(in srgb,var(--gold) 55%, transparent);color:var(--gold)}
   .chip.game-btn:hover{background:color-mix(in srgb,var(--gold) 18%, transparent);border-color:var(--gold);color:var(--gold)}
 
+  /* ---------- 手機：篩選列摺疊＋橫向滑動＋往下自動收起 ---------- */
+  @media (max-width:720px){
+    .toolbar{
+      margin:12px 0 16px;padding:7px;gap:6px;row-gap:8px;border-radius:12px;
+      flex-wrap:wrap;top:0;background:rgba(10,14,22,.9);
+      transition:transform .26s ease,opacity .2s ease;
+    }
+    .toolbar.away{transform:translateY(-115%);opacity:0;pointer-events:none}
+
+    .filter-toggle{display:inline-flex;align-items:center;gap:6px;order:1;
+      max-width:58%;white-space:nowrap;overflow:hidden}
+    .filter-toggle #filterToggleLabel{overflow:hidden;text-overflow:ellipsis}
+    .filter-toggle .caret{font-size:10px;line-height:1;color:var(--gold);transition:transform .2s ease}
+    .toolbar.open .filter-toggle{color:var(--ink);border-color:rgba(255,255,255,.32)}
+    .toolbar.open .filter-toggle .caret{transform:rotate(180deg)}
+
+    .count{order:2;flex:0 0 auto;letter-spacing:.04em}
+    .game-btn{order:3;margin-left:auto}
+
+    /* 展開後的篩選列：單列橫向滑動，不換行、不顯示捲軸 */
+    .filter-panel{
+      order:4;flex:1 0 100%;display:none;flex-wrap:nowrap;gap:6px;
+      overflow-x:auto;overflow-y:hidden;padding-bottom:2px;
+      scroll-snap-type:x proximity;scrollbar-width:none;-webkit-overflow-scrolling:touch;
+      overscroll-behavior-x:contain;
+    }
+    .filter-panel::-webkit-scrollbar{display:none}
+    .filter-panel > .chip{flex:0 0 auto;scroll-snap-align:start}
+    .filter-panel .spacer{display:none}
+    .toolbar.open .filter-panel{display:flex}
+  }
+  /* 超窄機（≤360px）先讓出「幾張」的空間，避免擠成兩列 */
+  @media (max-width:360px){
+    .count{display:none}
+    .game-btn{font-size:12px;padding:7px 10px}
+  }
+
   /* ---------- print ---------- */
   @media print{
     body{background:#fff;color:#000;padding:0}
@@ -371,23 +412,29 @@
       <li><b>連鎖</b>欄＝打完這張之後預設要接的下一張。</li>
       <li><b>詳解</b>＝點任一張卡，看一句話／解決什麼病／運作機制／產出／使用時機／別搞混／後續接著；內容直接取自 <code>Matt-Pocock-套件詳解.md</code>。</li>
       <li><b>抽卡</b>＝🎲 只給名稱，按卡片才揭曉內容，再按「看完整詳解」看全文；抽卡範圍會跟著上面的篩選走。</li>
+      <li><b>手機</b>＝上方篩選收成一顆 <b>篩選 ▾</b>，點開可橫向滑動選類型，選完自動收起；往下滑頁面時整條工具列會自動收上去，往上滑回來。</li>
     </ul>
   </details>
 </header>
 
 <div class="toolbar" id="toolbar">
-  <button class="chip on" data-filter="all">全部 40</button>
-  <button class="chip" data-filter="導航"><span class="dot" style="background:var(--t-daohang)"></span>導航</button>
-  <button class="chip" data-filter="拷問"><span class="dot" style="background:var(--t-kaowen)"></span>拷問</button>
-  <button class="chip" data-filter="規劃"><span class="dot" style="background:var(--t-guihua)"></span>規劃</button>
-  <button class="chip" data-filter="實作"><span class="dot" style="background:var(--t-shizuo)"></span>實作</button>
-  <button class="chip" data-filter="審查"><span class="dot" style="background:var(--t-shencha)"></span>審查</button>
-  <button class="chip" data-filter="架構"><span class="dot" style="background:var(--t-jiagou)"></span>架構</button>
-  <button class="chip" data-filter="基盤"><span class="dot" style="background:var(--t-jipan)"></span>基盤</button>
-  <button class="chip" data-filter="寫作"><span class="dot" style="background:var(--t-xiezuo)"></span>寫作</button>
-  <span class="spacer"></span>
-  <button class="chip" data-mode="自動">只顯示 自動</button>
-  <button class="chip" data-mode="手動">只顯示 手動</button>
+  <button class="chip filter-toggle" id="filterToggle" aria-expanded="false" aria-controls="filterPanel">
+    <span id="filterToggleLabel">篩選</span><span class="caret" aria-hidden="true">▾</span>
+  </button>
+  <div class="filter-panel" id="filterPanel">
+    <button class="chip on" data-filter="all">全部 40</button>
+    <button class="chip" data-filter="導航"><span class="dot" style="background:var(--t-daohang)"></span>導航</button>
+    <button class="chip" data-filter="拷問"><span class="dot" style="background:var(--t-kaowen)"></span>拷問</button>
+    <button class="chip" data-filter="規劃"><span class="dot" style="background:var(--t-guihua)"></span>規劃</button>
+    <button class="chip" data-filter="實作"><span class="dot" style="background:var(--t-shizuo)"></span>實作</button>
+    <button class="chip" data-filter="審查"><span class="dot" style="background:var(--t-shencha)"></span>審查</button>
+    <button class="chip" data-filter="架構"><span class="dot" style="background:var(--t-jiagou)"></span>架構</button>
+    <button class="chip" data-filter="基盤"><span class="dot" style="background:var(--t-jipan)"></span>基盤</button>
+    <button class="chip" data-filter="寫作"><span class="dot" style="background:var(--t-xiezuo)"></span>寫作</button>
+    <span class="spacer"></span>
+    <button class="chip" data-mode="自動">只顯示 自動</button>
+    <button class="chip" data-mode="手動">只顯示 手動</button>
+  </div>
   <span class="count" id="count"></span>
   <button class="chip game-btn" id="gameBtn">🎲 抽一張考自己</button>
 </div>
@@ -698,6 +745,7 @@ function apply(){
     if(visible) shown++;
   });
   countEl.textContent = `${shown} / ${CARDS.length}`;
+  filterLabel.textContent = (activeType === "all" ? "篩選" : activeType) + (activeMode ? " · " + activeMode : "");
 }
 
 document.querySelectorAll('.chip[data-filter]').forEach(btn=>{
@@ -706,6 +754,7 @@ document.querySelectorAll('.chip[data-filter]').forEach(btn=>{
     btn.classList.add("on");
     activeType = btn.dataset.filter;
     apply();
+    if(mqMobile.matches) closeFilters();
   });
 });
 
@@ -721,7 +770,40 @@ document.querySelectorAll('.chip[data-mode]').forEach(btn=>{
       btn.classList.add("on");
     }
     apply();
+    if(mqMobile.matches) closeFilters();
   });
+});
+
+/* ---------- 手機篩選列：摺疊 / 滑動 / 往下自動收起 ---------- */
+const toolbarEl = document.getElementById("toolbar");
+const filterToggle = document.getElementById("filterToggle");
+const filterLabel = document.getElementById("filterToggleLabel");
+const mqMobile = window.matchMedia("(max-width:720px)");
+
+function closeFilters(){
+  toolbarEl.classList.remove("open");
+  filterToggle.setAttribute("aria-expanded", "false");
+}
+
+filterToggle.addEventListener("click", ()=>{
+  const open = toolbarEl.classList.toggle("open");
+  filterToggle.setAttribute("aria-expanded", open ? "true" : "false");
+  if(open) toolbarEl.classList.remove("away");
+});
+
+let lastScrollY = window.scrollY;
+window.addEventListener("scroll", ()=>{
+  const y = window.scrollY;
+  const down = y > lastScrollY;
+  lastScrollY = y;
+  if(!mqMobile.matches) return;
+  if(toolbarEl.classList.contains("open")){ toolbarEl.classList.remove("away"); return; }
+  if(down && y > 160) toolbarEl.classList.add("away");
+  else if(!down) toolbarEl.classList.remove("away");
+}, {passive:true});
+
+mqMobile.addEventListener("change", e=>{
+  if(!e.matches){ closeFilters(); toolbarEl.classList.remove("away"); }
 });
 
 apply();
