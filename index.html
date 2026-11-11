@@ -309,6 +309,7 @@
   .guess:hover{transform:translateY(-3px);border-color:color-mix(in srgb,var(--c) 78%, transparent)}
   .guess:focus-visible{outline:2px solid var(--c);outline-offset:4px}
   .guess::before{
+    /* 字的下伸部會超出行框，bottom 用像素實測值：64px → 下緣留白 16px（900dpi 截圖量測） */
     content:var(--kanji,"");position:absolute;right:2px;bottom:64px;z-index:0;
     font-family:"Songti TC","Noto Serif TC","Source Han Serif TC","PingFang TC",serif;
     font-size:192px;line-height:1.02;font-weight:900;
