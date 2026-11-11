@@ -110,25 +110,76 @@
   .type{display:flex;align-items:center;gap:7px;margin-top:10px;font-size:11.5px;letter-spacing:.14em;color:var(--c);font-weight:700}
   .type .bar{flex:1;height:1px;background:linear-gradient(90deg, color-mix(in srgb, var(--c) 60%, transparent), transparent)}
 
+  /* ---------- per-type bottom watermark ---------- */
+  .card-inner > *{position:relative;z-index:1}
+  .card-inner::after{
+    content:"";position:absolute;left:0;right:0;bottom:0;height:40%;z-index:0;
+    pointer-events:none;opacity:.17;
+    background-image:var(--pat);background-size:var(--pat-size,auto);
+    -webkit-mask-image:linear-gradient(to top,#000 0%,#000 24%,transparent 94%);
+    mask-image:linear-gradient(to top,#000 0%,#000 24%,transparent 94%);
+    transition:opacity .22s ease;
+  }
+  .card:hover .card-inner::after{opacity:.32}
+
   .card-body{padding:13px 15px;display:flex;flex-direction:column;gap:11px;flex:1}
   .field .k{font:700 9.5px/1 ui-monospace,monospace;letter-spacing:.16em;color:var(--dim);margin-bottom:5px}
   .field .v{font-size:12.8px;line-height:1.62;color:#dfe6f2}
   .chain{margin-top:auto;padding-top:11px;border-top:1px dashed rgba(255,255,255,.13)}
-  .chain .v{font-size:12.4px;color:var(--c);font-weight:700}
-  .chain .v .arw{opacity:.6;margin-right:6px;font-weight:400}
+  .chain .v{
+    display:inline-block;padding:6px 10px 6px 8px;border-radius:9px;line-height:1.4;
+    font-size:12.4px;
+    color:color-mix(in srgb, var(--c) 28%, #fff);font-weight:800;
+    background:color-mix(in srgb, var(--c) 20%, rgba(255,255,255,.05));
+    border:1px solid color-mix(in srgb, var(--c) 42%, transparent);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.08);
+    transition:background .2s ease, border-color .2s ease, color .2s ease;
+  }
+  .card:hover .chain .v{
+    color:#fff;
+    background:color-mix(in srgb, var(--c) 34%, rgba(255,255,255,.07));
+    border-color:color-mix(in srgb, var(--c) 68%, transparent);
+  }
+  .chain .v .arw{opacity:.75;margin-right:7px;font-weight:400}
 
   .card-foot{display:flex;align-items:center;justify-content:space-between;padding:8px 15px 10px;font:600 8.6px/1 ui-monospace,monospace;letter-spacing:.14em;color:rgba(255,255,255,.32)}
   .gem{width:10px;height:10px;border-radius:3px;transform:rotate(45deg);background:var(--c);box-shadow:0 0 10px color-mix(in srgb, var(--c) 70%, transparent)}
 
-  /* type colors */
-  .t-daohang{--c:var(--t-daohang)}
-  .t-kaowen{--c:var(--t-kaowen)}
-  .t-guihua{--c:var(--t-guihua)}
-  .t-shizuo{--c:var(--t-shizuo)}
-  .t-shencha{--c:var(--t-shencha)}
-  .t-jiagou{--c:var(--t-jiagou)}
-  .t-jipan{--c:var(--t-jipan)}
-  .t-xiezuo{--c:var(--t-xiezuo)}
+  /* type colors + bottom watermark pattern
+     每類一種紋理，只用 CSS 漸層，顏色跟著 --c 走 */
+  .t-daohang{--c:var(--t-daohang);
+    --pat:
+      repeating-linear-gradient(60deg, var(--c) 0 1.7px, transparent 1.7px 15px),
+      repeating-linear-gradient(-60deg, var(--c) 0 1.7px, transparent 1.7px 15px);}
+
+  .t-kaowen{--c:var(--t-kaowen);
+    --pat:repeating-radial-gradient(circle at 50% 50%, var(--c) 0 1.5px, transparent 1.5px 9px);
+    --pat-size:30px 30px;}
+
+  .t-guihua{--c:var(--t-guihua);
+    --pat:
+      repeating-linear-gradient(0deg, var(--c) 0 1px, transparent 1px 10px),
+      repeating-linear-gradient(90deg, var(--c) 0 1px, transparent 1px 10px),
+      repeating-linear-gradient(0deg, var(--c) 0 1.6px, transparent 1.6px 50px),
+      repeating-linear-gradient(90deg, var(--c) 0 1.6px, transparent 1.6px 50px);}
+
+  .t-shizuo{--c:var(--t-shizuo);
+    --pat:repeating-linear-gradient(45deg, var(--c) 0 1.7px, transparent 1.7px 12px);}
+
+  .t-shencha{--c:var(--t-shencha);
+    --pat:repeating-linear-gradient(0deg, var(--c) 0 1px, transparent 1px 6px);}
+
+  .t-jiagou{--c:var(--t-jiagou);
+    --pat:
+      repeating-linear-gradient(45deg, var(--c) 0 1.3px, transparent 1.3px 20px),
+      repeating-linear-gradient(-45deg, var(--c) 0 1.3px, transparent 1.3px 20px);}
+
+  .t-jipan{--c:var(--t-jipan);
+    --pat:radial-gradient(circle at 50% 50%, var(--c) 0 1.4px, transparent 1.6px);
+    --pat-size:11px 11px;}
+
+  .t-xiezuo{--c:var(--t-xiezuo);
+    --pat:repeating-linear-gradient(90deg, var(--c) 0 1.5px, transparent 1.5px 9px);}
 
   .hidden{display:none !important}
 
@@ -184,6 +235,12 @@
     padding:13px 24px;border-top:1px solid rgba(255,255,255,.09);background:rgba(0,0,0,.28);
     font-size:12.6px;color:#cfd8e6}
   .panel-foot .arw{color:var(--c);font-weight:700;margin-right:8px}
+  #sheetChain{
+    display:inline-block;padding:7px 12px;border-radius:999px;line-height:1.4;
+    color:color-mix(in srgb, var(--c) 26%, #fff);font-weight:700;
+    background:color-mix(in srgb, var(--c) 18%, rgba(255,255,255,.04));
+    border:1px solid color-mix(in srgb, var(--c) 40%, transparent);
+  }
   .panel-foot .kbd{font:600 10px/1 ui-monospace,monospace;color:rgba(255,255,255,.35);letter-spacing:.08em}
 
   /* ---------- print ---------- */
@@ -198,8 +255,9 @@
     .card-head{background:#f4f6fa}
     .name{color:#000;text-shadow:none}
     .field .v{color:#111}
-    .chain .v{color:#000}
+    .chain .v{color:#000;background:#eef2f8;border-color:#c9d2e0;box-shadow:none}
     .card-foot{color:#888}
+    .card-inner::after{opacity:.24}
   }
   @page{size:A4;margin:10mm}
 </style>
