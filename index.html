@@ -114,6 +114,17 @@
     border:1px solid rgba(255,255,255,.07);
     overflow:hidden;
   }
+  /* 巨型暗淡類型字（蓋章感），壓在內容下面 */
+  .card-inner::before{
+    content:var(--kanji,"");
+    position:absolute;right:-8px;bottom:-30px;z-index:0;
+    font-family:"Songti TC","Noto Serif TC","Source Han Serif TC","PingFang TC",serif;
+    font-size:158px;line-height:.8;font-weight:900;letter-spacing:0;
+    color:var(--c);opacity:.1;pointer-events:none;user-select:none;
+    text-shadow:0 0 40px color-mix(in srgb, var(--c) 40%, transparent);
+    transition:opacity .22s ease, transform .22s ease;
+  }
+  .card:hover .card-inner::before{opacity:.17;transform:translateY(-4px)}
 
   .card-head{padding:14px 15px 12px;border-bottom:1px solid rgba(255,255,255,.08);
     background:linear-gradient(180deg, color-mix(in srgb, var(--c) 20%, transparent), transparent);}
@@ -169,38 +180,38 @@
 
   /* type colors + bottom watermark pattern
      每類一種紋理，只用 CSS 漸層，顏色跟著 --c 走 */
-  .t-daohang{--c:var(--t-daohang);
+  .t-daohang{--c:var(--t-daohang);--kanji:"導";
     --pat:
       repeating-linear-gradient(60deg, var(--c) 0 1.7px, transparent 1.7px 15px),
       repeating-linear-gradient(-60deg, var(--c) 0 1.7px, transparent 1.7px 15px);}
 
-  .t-kaowen{--c:var(--t-kaowen);
+  .t-kaowen{--c:var(--t-kaowen);--kanji:"拷";
     --pat:repeating-radial-gradient(circle at 50% 50%, var(--c) 0 1.5px, transparent 1.5px 9px);
     --pat-size:30px 30px;}
 
-  .t-guihua{--c:var(--t-guihua);
+  .t-guihua{--c:var(--t-guihua);--kanji:"規";
     --pat:
       repeating-linear-gradient(0deg, var(--c) 0 1px, transparent 1px 10px),
       repeating-linear-gradient(90deg, var(--c) 0 1px, transparent 1px 10px),
       repeating-linear-gradient(0deg, var(--c) 0 1.6px, transparent 1.6px 50px),
       repeating-linear-gradient(90deg, var(--c) 0 1.6px, transparent 1.6px 50px);}
 
-  .t-shizuo{--c:var(--t-shizuo);
+  .t-shizuo{--c:var(--t-shizuo);--kanji:"作";
     --pat:repeating-linear-gradient(45deg, var(--c) 0 1.7px, transparent 1.7px 12px);}
 
-  .t-shencha{--c:var(--t-shencha);
+  .t-shencha{--c:var(--t-shencha);--kanji:"審";
     --pat:repeating-linear-gradient(0deg, var(--c) 0 1px, transparent 1px 6px);}
 
-  .t-jiagou{--c:var(--t-jiagou);
+  .t-jiagou{--c:var(--t-jiagou);--kanji:"構";
     --pat:
       repeating-linear-gradient(45deg, var(--c) 0 1.3px, transparent 1.3px 20px),
       repeating-linear-gradient(-45deg, var(--c) 0 1.3px, transparent 1.3px 20px);}
 
-  .t-jipan{--c:var(--t-jipan);
+  .t-jipan{--c:var(--t-jipan);--kanji:"基";
     --pat:radial-gradient(circle at 50% 50%, var(--c) 0 1.4px, transparent 1.6px);
     --pat-size:11px 11px;}
 
-  .t-xiezuo{--c:var(--t-xiezuo);
+  .t-xiezuo{--c:var(--t-xiezuo);--kanji:"寫";
     --pat:repeating-linear-gradient(90deg, var(--c) 0 1.5px, transparent 1.5px 9px);}
 
   .hidden{display:none !important}
@@ -227,8 +238,15 @@
   @keyframes pop{from{opacity:0;transform:translateY(16px) scale(.985)}to{opacity:1;transform:none}}
   .panel::before{content:"";position:absolute;inset:0 0 auto 0;height:3px;background:linear-gradient(90deg,var(--c),transparent 80%)}
 
-  .panel-head{padding:20px 24px 16px;border-bottom:1px solid rgba(255,255,255,.09);
+  .panel-head{padding:20px 24px 16px;border-bottom:1px solid rgba(255,255,255,.09);position:relative;overflow:hidden;
     background:linear-gradient(180deg,color-mix(in srgb,var(--c) 16%,transparent),transparent);flex:none}
+  .panel-head > *{position:relative;z-index:1}
+  .panel-head::after{
+    content:var(--kanji,"");position:absolute;right:8px;top:50%;transform:translateY(-50%);z-index:0;
+    font-family:"Songti TC","Noto Serif TC","Source Han Serif TC","PingFang TC",serif;
+    font-size:104px;line-height:.8;font-weight:900;
+    color:var(--c);opacity:.13;pointer-events:none;user-select:none;
+  }
   .panel-head .no{font-size:11.5px}
   .panel-head .name{font-size:clamp(24px,3vw,34px);margin-top:4px}
   .x{
@@ -279,6 +297,7 @@
   .game-card .card{width:100%;pointer-events:none}
 
   .guess{
+    position:relative;overflow:hidden;
     width:100%;max-width:340px;aspect-ratio:5/7;border-radius:18px;cursor:pointer;
     display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;
     padding:26px;text-align:center;font:inherit;color:var(--ink);
@@ -289,6 +308,13 @@
   }
   .guess:hover{transform:translateY(-3px);border-color:color-mix(in srgb,var(--c) 78%, transparent)}
   .guess:focus-visible{outline:2px solid var(--c);outline-offset:4px}
+  .guess::before{
+    content:var(--kanji,"");position:absolute;right:-10px;bottom:-26px;z-index:0;
+    font-family:"Songti TC","Noto Serif TC","Source Han Serif TC","PingFang TC",serif;
+    font-size:152px;line-height:.8;font-weight:900;
+    color:var(--c);opacity:.13;pointer-events:none;user-select:none;
+  }
+  .guess > *{position:relative;z-index:1}
   .guess .q{font:700 10px/1 ui-monospace,monospace;letter-spacing:.22em;color:var(--c);opacity:.85}
   .guess .n{font-size:clamp(26px,5.2vw,36px);font-weight:900;letter-spacing:-.02em;line-height:1.06;word-break:break-word;
     text-shadow:0 2px 22px color-mix(in srgb,var(--c) 45%, transparent)}
@@ -323,6 +349,7 @@
     .chain .v{color:#000;background:#eef2f8;border-color:#c9d2e0;box-shadow:none}
     .card-foot{color:#888}
     .card-inner::after{opacity:.24}
+    .card-inner::before{opacity:.16}
   }
   @page{size:A4;margin:10mm}
 </style>
