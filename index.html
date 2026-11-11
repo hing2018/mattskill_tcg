@@ -348,7 +348,14 @@
   @media (max-width:720px){
     .toolbar{
       margin:12px 0 16px;padding:7px;gap:6px;row-gap:8px;border-radius:12px;
-      flex-wrap:wrap;top:0;background:rgba(10,14,22,.9);
+      flex-wrap:wrap;top:0;
+      /* 沿用桌機的玻璃透明感：半透明底 + backdrop blur（手機 blur 加強到 14px 補償小螢幕）。
+         疊一層 30% 的暗色底：玻璃底下是亮色卡片時，chip 文字仍維持 WCAG AA 對比（≥4.5）。 */
+      background:
+        linear-gradient(rgba(11,15,24,.30), rgba(11,15,24,.30)),
+        rgba(255,255,255,.035);
+      backdrop-filter:blur(14px) saturate(1.4);
+      -webkit-backdrop-filter:blur(14px) saturate(1.4);
       transition:transform .26s ease,opacity .2s ease;
     }
     .toolbar.away{transform:translateY(-115%);opacity:0;pointer-events:none}
